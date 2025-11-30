@@ -5,3 +5,11 @@
 ### Description
 
 Simple machine learning project to demonstrate tools utilisation.
+
+### Tools demonstrated
+
+- version 0.1.0
+    - Pydantic
+    - Git
+    - Pytorch lightning
+    - Sphinx
