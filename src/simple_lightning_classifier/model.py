@@ -57,13 +57,13 @@ class BinaryClassifier(pl.LightningModule):
         acc = correct / y.numel()
         return {"loss": loss, "acc": acc}
 
-    def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:  # noqa: ARG002
+    def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         metrics = self._compute_loss_and_acc(batch)
         self.log("train_loss", metrics["loss"], on_step=True, on_epoch=True)
         self.log("train_acc", metrics["acc"], on_step=True, on_epoch=True)
         return metrics["loss"]
 
-    def validation_step(self, batch: Any, batch_idx: int) -> None:  # noqa: ARG002
+    def validation_step(self, batch: Any, batch_idx: int) -> None:
         metrics = self._compute_loss_and_acc(batch)
         self.log("val_loss", metrics["loss"], prog_bar=True, on_epoch=True)
         self.log("val_acc", metrics["acc"], prog_bar=True, on_epoch=True)
