@@ -36,8 +36,7 @@ class TrainingConfig(BaseModel):
 
 
 class AppConfig(BaseSettings):
-    """
-    Top-level application configuration.
+    """Top-level application configuration.
 
     Precedence (highest → lowest):
     1. Environment variables (prefix ``APP_``, nested with ``__``)
@@ -45,6 +44,7 @@ class AppConfig(BaseSettings):
     3. Init kwargs
     4. Secrets (unused here)
     """
+
     data: DataConfig = DataConfig()
     model: ModelConfig = ModelConfig()
     training: TrainingConfig = TrainingConfig()
@@ -53,6 +53,8 @@ class AppConfig(BaseSettings):
         env_prefix="APP_",
         env_nested_delimiter="__",
         extra="ignore",
+        env_file=".env",
+        env_file_encoding="utf-8",
     )
 
     @classmethod
@@ -64,13 +66,11 @@ class AppConfig(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
-        """
-        Define the order of configuration sources.
-
-        We inject a YAML source between env and init kwargs:
+        """Define the order of configuration sources.
 
         - env vars
-        - yaml file (configs/default.yaml or APP_CONFIG_FILE)
+        - .env file
+        - yaml file
         - init kwargs
         - file secrets
         """
@@ -82,6 +82,7 @@ class AppConfig(BaseSettings):
 
         return (
             env_settings,
+            dotenv_settings,
             yaml_source,
             init_settings,
             file_secret_settings,

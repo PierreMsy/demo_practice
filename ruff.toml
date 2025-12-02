@@ -23,6 +23,7 @@ ignore = [
     "N806", # non lowercase variable in function
     "D107", # docstring in __init__ (arguments should be in class docstring)
     "D100", # undocumented public module (usually redundant with class docstring)
+    "S101",  # Use of asserts
 ]
 
 # Exclusions (data, models, logs)
