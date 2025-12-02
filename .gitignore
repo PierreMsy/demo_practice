@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *.pyo
 
+# Sphinx
+docs/_build/
+
 # Virtual environments
 venv/
 .env/

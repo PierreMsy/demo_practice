@@ -13,3 +13,4 @@ Simple machine learning project to demonstrate tools utilisation.
     - Git
     - Pytorch lightning
     - Sphinx
+    - Ruff
