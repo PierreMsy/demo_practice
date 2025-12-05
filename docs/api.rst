@@ -4,7 +4,7 @@ API Reference
 Data Module
 -----------
 
-.. automodule:: simple_lightning_classifier.data
+.. automodule:: simple_lightning_classifier.datamodule
    :members:
    :undoc-members:
    :show-inheritance:

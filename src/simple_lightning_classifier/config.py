@@ -1,10 +1,10 @@
-from __future__ import annotations
+#from __future__ import annotations
 
 import os
 from pathlib import Path
 from typing import Any, Tuple, Type
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
@@ -12,33 +12,45 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-
+# what the domain needs
 class DataConfig(BaseModel):
-    test_size: float = Field(0.2, description="Fraction of data used for the test split.")
-    random_state: int = Field(42, description="Random seed used for train/test split.")
+    test_size: float = Field(default=0.2, description="Fraction of data used for the test split.")
+    random_state: int = Field(default=42, description="Random seed used for train/test split.")
     standardize: bool = Field(
-        True,
+        default=True,
         description="Whether to apply standardization (mean 0, std 1) to features.",
     )
 
 
 class ModelConfig(BaseModel):
-    hidden_dim: int = Field(16, ge=1, description="Hidden units in the hidden layer.")
-    dropout: float = Field(0.1, ge=0.0, le=1.0, description="Dropout probability.")
+    hidden_dim: int = Field(default=16, ge=1, description="Hidden units in the hidden layer.")
+    dropout: float = Field(default=0.1, ge=0.0, le=1.0, description="Dropout probability.")
 
 
 class TrainingConfig(BaseModel):
-    max_epochs: int = Field(5, ge=1, description="Number of training epochs.")
-    batch_size: int = Field(32, ge=1, description="Batch size.")
-    learning_rate: float = Field(1e-3, gt=0.0, description="Learning rate.")
-    num_workers: int = Field(0, ge=0, description="DataLoader workers.")
-    log_every_n_steps: int = Field(10, ge=1, description="Logging frequency.")
+    max_epochs: int = Field(default=5, ge=1, description="Number of training epochs.")
+    batch_size: int = Field(default=16, ge=1, description="Batch size.")
+    learning_rate: float = Field(default=1e-3, gt=0.0, description="Learning rate.")
+    num_workers: int = Field(default=0, ge=0, description="DataLoader workers.")
+    log_every_n_steps: int = Field(default=10, ge=1, description="Logging frequency.")
+    checkpoint_dir : Path = Field(
+        default=Path(__file__).parent.parent.parent / "checkpoints",
+        description="Where to store checkpoints",
+        )
+
+    @field_validator('checkpoint_dir')
+    @classmethod
+    def _create_dir(cls, path: Path) -> Path:
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
 
+# how we load settings
 class AppConfig(BaseSettings):
     """Top-level application configuration.
 
     Precedence (highest → lowest):
+
     1. Environment variables (prefix ``APP_``, nested with ``__``)
     2. YAML file (``APP_CONFIG_FILE`` or ``configs/default.yaml``)
     3. Init kwargs

@@ -19,6 +19,7 @@ class BinaryClassifier(pl.LightningModule):
     Simple neural network for binary classification on tabular data.
 
     Architecture:
+
     - Linear(input_dim -> hidden_dim)
     - ReLU
     - Dropout
