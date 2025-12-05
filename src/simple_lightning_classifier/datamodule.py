@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 """
 Data module for the breast cancer dataset.
@@ -6,6 +5,7 @@ Data module for the breast cancer dataset.
 This wraps scikit-learn's breast cancer dataset into a PyTorch
 Lightning DataModule.
 """
+from __future__ import annotations
 
 from typing import Optional
 
@@ -55,8 +55,8 @@ class BreastCancerDataModule(pl.LightningDataModule):
 
         Called by the Trainer on ``fit``, ``validate``, etc.
         """
-        X = data.data.astype(np.float32)
         data = load_breast_cancer()
+        X = data.data.astype(np.float32)
         y = data.target.astype(np.float32)  # binary labels 0/1
 
         X_train, X_val, y_train, y_val = train_test_split(
