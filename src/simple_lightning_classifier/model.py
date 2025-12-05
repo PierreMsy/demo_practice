@@ -11,7 +11,7 @@ from lightning import pytorch as pl
 from torch import nn
 from torch.nn import functional as F
 
-from .config import AppConfig
+from .config import ModelConfig, TrainingConfig
 
 
 class BinaryClassifier(pl.LightningModule):
@@ -28,13 +28,19 @@ class BinaryClassifier(pl.LightningModule):
     Loss: BCEWithLogitsLoss
     Metric: accuracy on 0/1 predictions
     """
-    def __init__(self, input_dim: int, config: AppConfig) -> None:
+    def __init__(
+            self,
+            input_dim: int,
+            model_config: ModelConfig,
+            training_config: TrainingConfig,
+        ) -> None:
         super().__init__()
         self.save_hyperparameters(ignore=["config"])
-        self.config = config
+        self.model_config = model_config
+        self.training_config = training_config
 
-        hidden_dim = config.model.hidden_dim
-        dropout = config.model.dropout
+        hidden_dim = model_config.hidden_dim
+        dropout = model_config.dropout
 
         self.net = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
@@ -72,6 +78,6 @@ class BinaryClassifier(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(
             self.parameters(),
-            lr=self.config.training.learning_rate,
+            lr=self.training_config.learning_rate,
         )
         return optimizer

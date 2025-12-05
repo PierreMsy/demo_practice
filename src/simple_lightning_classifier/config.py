@@ -31,9 +31,9 @@ class TrainingConfig(BaseModel):
     max_epochs: int = Field(default=5, ge=1, description="Number of training epochs.")
     batch_size: int = Field(default=16, ge=1, description="Batch size.")
     learning_rate: float = Field(default=1e-3, gt=0.0, description="Learning rate.")
-    num_workers: int = Field(default=0, ge=0, description="DataLoader workers.")
-    log_every_n_steps: int = Field(default=10, ge=1, description="Logging frequency.")
-    checkpoint_dir : Path = Field(
+    num_workers: int = Field(default=10, ge=0, description="DataLoader workers.")
+    log_every_n_steps: int = Field(default=4, ge=1, description="Logging frequency.")
+    checkpoint_dir: Path = Field(
         default=Path(__file__).parent.parent.parent / "checkpoints",
         description="Where to store checkpoints",
         )

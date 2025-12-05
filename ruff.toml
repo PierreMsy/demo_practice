@@ -25,6 +25,7 @@ ignore = [
     "D100", # undocumented public module (usually redundant with class docstring)
     "S101",  # Use of asserts
 ]
+preview = true
 
 # Exclusions (data, models, logs)
 exclude = [

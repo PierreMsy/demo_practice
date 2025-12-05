@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
 
-from simple_lightning_classifier.config import AppConfig
+from simple_lightning_classifier.config import DataConfig, TrainingConfig
 
 
 class BreastCancerDataModule(pl.LightningDataModule):
@@ -28,9 +28,10 @@ class BreastCancerDataModule(pl.LightningDataModule):
     and split into train and validation sets.
     """
 
-    def __init__(self, config: AppConfig) -> None:
+    def __init__(self, data_config: DataConfig, training_config: TrainingConfig) -> None:
         super().__init__()
-        self.config = config
+        self.data_config = data_config
+        self.training_config = training_config
 
         self._scaler: Optional[StandardScaler] = None
         self._train_dataset: Optional[TensorDataset] = None
@@ -54,19 +55,19 @@ class BreastCancerDataModule(pl.LightningDataModule):
 
         Called by the Trainer on ``fit``, ``validate``, etc.
         """
-        data = load_breast_cancer()
         X = data.data.astype(np.float32)
+        data = load_breast_cancer()
         y = data.target.astype(np.float32)  # binary labels 0/1
 
         X_train, X_val, y_train, y_val = train_test_split(
             X,
             y,
-            test_size=self.config.data.test_size,
-            random_state=self.config.data.random_state,
+            test_size=self.data_config.test_size,
+            random_state=self.data_config.random_state,
             stratify=y,
         )
 
-        if self.config.data.standardize:
+        if self.data_config.standardize:
             self._scaler = StandardScaler()
             X_train = self._scaler.fit_transform(X_train)
             X_val = self._scaler.transform(X_val)
@@ -82,15 +83,15 @@ class BreastCancerDataModule(pl.LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             self.train_dataset,
-            batch_size=self.config.training.batch_size,
+            batch_size=self.training_config.batch_size,
             shuffle=True,
-            num_workers=self.config.training.num_workers,
+            num_workers=self.training_config.num_workers,
         )
 
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
             self.val_dataset,
-            batch_size=self.config.training.batch_size,
+            batch_size=self.training_config.batch_size,
             shuffle=False,
-            num_workers=self.config.training.num_workers,
+            num_workers=self.training_config.num_workers,
         )
